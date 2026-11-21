@@ -1,0 +1,112 @@
+# Every command for Rgt App, for both languages. `just` lists them.
+# Recipes run in PowerShell 7 (pwsh) on every platform.
+
+set shell := ["pwsh", "-NoLogo", "-NoProfile", "-Command"]
+
+core := "crates/rgt-app-core"
+goose_dir := core / "goose"
+bridge := goose_dir / "bridge/lib.goose"
+contest_goose := goose_dir / "bench/contest.goose"
+native_contest := "target/goose-native/contest" + if os() == "windows" { ".exe" } else { "" }
+
+# List every command
+default:
+    @just --list --unsorted
+
+# Check that every tool is installed and matches the pinned versions
+doctor:
+    pwsh -NoLogo -NoProfile -File scripts/doctor.ps1
+
+# Debug build: Goose's runtime checks on, nothing optimized
+build:
+    cargo build --workspace
+
+# Optimized build: Goose and Rust at full speed
+release:
+    cargo build --workspace --release
+
+# Run the program (debug build)
+run *args:
+    cargo run -p rgt-app -- {{args}}
+
+# Run the program (optimized build)
+run-release *args:
+    cargo run -p rgt-app --release -- {{args}}
+
+# Typecheck the Goose code, then the Rust code
+check: _goose-check
+    cargo check --workspace --all-targets
+
+# Format the Goose and Rust code
+fmt:
+    goose format '{{goose_dir}}'
+    cargo fmt --all
+
+# Format check for both languages, then clippy with warnings as errors
+lint: _goose-check
+    goose format --check '{{goose_dir}}'
+    cargo fmt --all --check
+    cargo clippy --workspace --all-targets -- -D warnings
+
+# Goose tests, then Rust tests (nextest), then doc tests
+test: test-goose test-rust
+
+# Run every Goose test file with Goose's runtime checks on
+test-goose:
+    Get-ChildItem '{{goose_dir}}/tests' -Filter *.goose | ForEach-Object { goose run --debug $_.FullName; if ($LASTEXITCODE) { exit $LASTEXITCODE } }
+
+# Rust tests: one process per test (nextest), then the doc tests
+test-rust:
+    cargo nextest run --workspace
+    cargo test --workspace --doc
+
+# The Rust tests again, against the optimized code that ships
+test-release:
+    cargo nextest run --workspace --release
+
+# Goose vs Rust micro-benchmarks
+bench:
+    cargo bench -p rgt-app-core --bench kernels
+
+# Memory and speed contest: Goose alone, Goose inside Rust, and Rust
+contest:
+    goose build -o '{{native_contest}}' '{{contest_goose}}'
+    $env:GOOSE_CONTEST_EXE = (Resolve-Path '{{native_contest}}').Path; cargo run --release -q -p rgt-app-core --example contest
+
+# Per-line report of the bounds checks Goose kept (look here when a kernel is slow)
+bce:
+    goose check --bce-lines '{{bridge}}'
+
+# Report how many data stacks the Goose code uses
+stacks:
+    goose check --stacks '{{bridge}}'
+
+# Write the generated C and header to target/goose-c/ for inspection
+goose-c:
+    New-Item -ItemType Directory -Force target/goose-c | Out-Null
+    goose --standalone --header target/goose-c/lib.h -o target/goose-c/lib.c '{{bridge}}'
+
+# Fetch the Goose packages the bridge declares (the build never fetches)
+fetch:
+    goose fetch '{{bridge}}'
+
+# Check dependencies for licence and security problems
+audit:
+    cargo deny check
+
+# Build and open the API documentation
+docs:
+    cargo doc --workspace --no-deps --open
+
+# The full gate: lint, tests (debug and release), audit
+ci: lint test test-release audit
+
+# Remove build output
+clean:
+    cargo clean
+
+# Typecheck every Goose root file: the bridge, the contest and the tests
+_goose-check:
+    goose check '{{bridge}}'
+    goose check '{{contest_goose}}'
+    Get-ChildItem '{{goose_dir}}/tests' -Filter *.goose | ForEach-Object { goose check $_.FullName; if ($LASTEXITCODE) { exit $LASTEXITCODE } }

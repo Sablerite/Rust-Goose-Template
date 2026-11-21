@@ -1,0 +1,36 @@
+# Dependency rules, checked by `just audit` (cargo deny check).
+
+[graph]
+all-features = true
+
+[advisories]
+# Known security problems from the RustSec advisory database fail the audit.
+# To accept one deliberately, add its ID here with a comment saying why.
+ignore = []
+
+[licenses]
+# Licences dependencies may use. Add one only after reading it.
+allow = [
+    "MIT",
+    "Apache-2.0",
+    "BSD-3-Clause",
+    "ISC",
+    "Unicode-3.0",
+]
+confidence-threshold = 0.8
+
+[licenses.private]
+# This workspace's own crates are not published, so they need no licence.
+ignore = true
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+# The workspace's own path dependencies have no version, which is fine.
+allow-wildcard-paths = true
+
+[sources]
+# Only crates.io; a git or unknown registry dependency must be added on purpose.
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]

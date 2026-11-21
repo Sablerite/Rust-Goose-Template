@@ -1,0 +1,42 @@
+[workspace]
+resolver = "3"
+members = ["crates/rgt-app", "crates/rgt-app-core"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.99"
+publish = false
+
+[workspace.dependencies]
+rgt-app-core = { path = "crates/rgt-app-core" }
+# Build: Goose's header -> Rust declarations, and Goose's C -> a static library.
+bindgen = "0.73.2"
+cc = "1.11.3"
+# Process memory readings for the memory tests and the contest.
+windows-sys = { version = "0.61.2", features = [
+    "Win32_Foundation",
+    "Win32_System_ProcessStatus",
+    "Win32_System_Threading",
+] }
+# Tests and benchmarks.
+proptest = "1.12.0"
+divan = "0.1.21"
+
+[workspace.lints.rust]
+unsafe_op_in_unsafe_fn = "deny"
+missing_debug_implementations = "warn"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+# Every `unsafe` block must say why it is sound, one operation at a time.
+undocumented_unsafe_blocks = "warn"
+multiple_unsafe_ops_per_block = "warn"
+# Lengths and counts cross the boundary as fixed-width integers.
+cast_possible_truncation = "warn"
+cast_sign_loss = "warn"
+cast_possible_wrap = "warn"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1

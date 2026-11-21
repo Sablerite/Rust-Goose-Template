@@ -1,0 +1,28 @@
+[package]
+name = "rgt-app-core"
+description = "The Goose hot paths of Rgt App, behind a safe Rust API"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+# This crate links the Goose runtime. Declaring it lets Cargo refuse a build
+# that would link two copies (two `goose_init` symbols) into one program.
+links = "rgt_app_goose"
+
+[lints]
+workspace = true
+
+[build-dependencies]
+bindgen.workspace = true
+cc.workspace = true
+
+[target.'cfg(windows)'.dependencies]
+windows-sys.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true
+divan.workspace = true
+
+[[bench]]
+name = "kernels"
+harness = false

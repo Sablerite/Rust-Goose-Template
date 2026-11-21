@@ -1,0 +1,36 @@
+* text=auto eol=lf
+*.png binary
+*.vsix binary
+
+# Asset files: never convert line endings. Git's guess at "text or binary"
+# can be wrong, and a wrong guess corrupts the file. Text formats such as
+# .obj, .gltf, .svg, .wgsl and .toml stay text.
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.bmp binary
+*.tga binary
+*.hdr binary
+*.exr binary
+*.ico binary
+*.icns binary
+*.dds binary
+*.ktx binary
+*.ktx2 binary
+*.basis binary
+*.wav binary
+*.ogg binary
+*.mp3 binary
+*.flac binary
+*.opus binary
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+*.glb binary
+*.fbx binary
+*.blend binary
+*.zip binary
+*.7z binary
+*.pdf binary

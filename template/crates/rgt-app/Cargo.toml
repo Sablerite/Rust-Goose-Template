@@ -1,0 +1,13 @@
+[package]
+name = "rgt-app"
+description = "Rgt App: the Rust program, calling Goose for its hot paths"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+rgt-app-core.workspace = true

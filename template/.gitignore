@@ -1,0 +1,15 @@
+# Build output
+/target/
+
+# Executables and objects a stray `goose build` leaves beside the Goose sources
+*.exe
+*.pdb
+*.ilk
+*.obj
+*.o
+# ...but Wavefront .obj models in assets/ are real files
+!/assets/**/*.obj
+
+# Operating system files
+.DS_Store
+Thumbs.db

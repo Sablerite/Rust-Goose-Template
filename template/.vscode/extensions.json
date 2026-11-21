@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "rust-lang.rust-analyzer",
+    "aardappel.goose-language",
+    "nefrob.vscode-just-syntax",
+    "tamasfe.even-better-toml",
+    "editorconfig.editorconfig"
+  ]
+}

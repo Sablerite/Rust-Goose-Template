@@ -1,0 +1,22 @@
+# Settings for the Goose part of the build. Each one is optional; uncomment
+# a line to override the default. An environment variable of the same name
+# takes precedence over what is written here.
+[env]
+# Which goose to use (default: the one on PATH).
+# GOOSE = "C:\\path\\to\\goose.exe"
+
+# The C compiler for the Goose code: "clang-cl" (default, fastest), "cl"
+# (MSVC), or a full path. clang-cl is found on PATH or in C:\Program Files\LLVM\bin.
+# GOOSE_C_COMPILER = "clang-cl"
+
+# Force Goose's build mode instead of following Cargo's profile:
+# "debug" (runtime checks on, unoptimized) or "release".
+# GOOSE_PROFILE = "release"
+
+# Address space reserved per Goose data stack (64K to 256T, default 2G).
+# Raise it when Goose stops with "runs out of a data stack". Reserving costs
+# nothing until the memory is actually used.
+# GOOSE_STACK_RESERVE = "8G"
+
+# Where libclang.dll is, for bindgen (default: C:\Program Files\LLVM\bin).
+# LIBCLANG_PATH = "C:\\Program Files\\LLVM\\bin"

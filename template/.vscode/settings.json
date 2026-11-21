@@ -1,0 +1,9 @@
+{
+  "editor.formatOnSave": true,
+  "files.eol": "\n",
+  "rust-analyzer.check.command": "clippy",
+  "goose.entryFile": "crates/rgt-app-core/goose/bridge/lib.goose",
+  "[goose]": {
+    "editor.defaultFormatter": "aardappel.goose-language"
+  }
+}
